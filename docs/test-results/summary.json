@@ -1,0 +1,149 @@
+{
+  "generated_at": "2026-10-03T13:02:16.882911+08:00",
+  "environment": {
+    "python": "3.13.5",
+    "pyside6": "6.11.1",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD"
+  },
+  "tests": {
+    "run": 28,
+    "failures": 0,
+    "errors": 0,
+    "elapsed_seconds": 3.2202846000145655,
+    "round_trip_combinations": 262144,
+    "independent_reference_combinations": 8192
+  },
+  "known_vector": {
+    "plaintext": "10011010",
+    "key": "1010000010",
+    "ciphertext": "11101111",
+    "k1": "10100100",
+    "k2": "10010010"
+  },
+  "key_equivalence": {
+    "unique_subkey_pairs": 512,
+    "xor_mask": "0100000000",
+    "all_keys_have_same_subkeys_as_partner": true,
+    "sample_equivalent_keys": [
+      "1010000010",
+      "1110000010"
+    ]
+  },
+  "ascii": {
+    "plaintext": "This is a test",
+    "ciphertext_hex": "82 0C 83 63 C2 83 63 C2 F9 C2 2A 5C 63 2A",
+    "ciphertext_base64": "ggyDY8KDY8L5wipcYyo="
+  },
+  "searches": [
+    {
+      "pair_count": 1,
+      "pairs": [
+        [
+          154,
+          239
+        ]
+      ],
+      "candidates": [
+        "1010000010",
+        "1110000010"
+      ],
+      "checked": 1024,
+      "elapsed_seconds": 0.000675299990689382,
+      "completed": true
+    },
+    {
+      "pair_count": 2,
+      "pairs": [
+        [
+          154,
+          239
+        ],
+        [
+          85,
+          5
+        ]
+      ],
+      "candidates": [
+        "1010000010",
+        "1110000010"
+      ],
+      "checked": 1024,
+      "elapsed_seconds": 0.0006536000000778586,
+      "completed": true
+    },
+    {
+      "pair_count": 3,
+      "pairs": [
+        [
+          154,
+          239
+        ],
+        [
+          85,
+          5
+        ],
+        [
+          0,
+          106
+        ]
+      ],
+      "candidates": [
+        "1010000010",
+        "1110000010"
+      ],
+      "checked": 1024,
+      "elapsed_seconds": 0.0006461000011768192,
+      "completed": true
+    },
+    {
+      "pair_count": 4,
+      "pairs": [
+        [
+          154,
+          239
+        ],
+        [
+          85,
+          5
+        ],
+        [
+          0,
+          106
+        ],
+        [
+          255,
+          142
+        ]
+      ],
+      "candidates": [
+        "1010000010",
+        "1110000010"
+      ],
+      "checked": 1024,
+      "elapsed_seconds": 0.0006423000013455749,
+      "completed": true
+    }
+  ],
+  "timing_note": "本地进程完成测试、缓存预热后的一次实测，包含搜索循环，不含界面启动；不代表性能保证。",
+  "collisions": {
+    "completed": true,
+    "checked": 262144,
+    "elapsed_seconds": 0.14077339999494143,
+    "plaintext_count": 256,
+    "selected_summary": {
+      "plaintext": 154,
+      "distinct_ciphertexts": 254,
+      "collision_groups": 254,
+      "max_candidates": 8
+    },
+    "min_distinct_ciphertexts": 254,
+    "max_distinct_ciphertexts": 254,
+    "min_max_candidates": 8,
+    "max_max_candidates": 8
+  },
+  "external_cross_test": {
+    "status": "待完成",
+    "reason": "尚未取得其他小组程序或测试数据"
+  }
+}

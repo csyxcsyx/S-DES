@@ -1,0 +1,33 @@
+test_bit_input_width_and_leading_zero (tests.test_core.CoreTests.test_bit_input_width_and_leading_zero) ... ok
+test_byte_transform_preserves_every_value (tests.test_core.CoreTests.test_byte_transform_preserves_every_value) ... ok
+test_exhaustive_262144_round_trips_and_permutations (tests.test_core.CoreTests.test_exhaustive_262144_round_trips_and_permutations) ... ok
+test_hand_calculated_vector_and_intermediate_steps (tests.test_core.CoreTests.test_hand_calculated_vector_and_intermediate_steps) ... ok
+test_independent_string_reference_for_every_key (tests.test_core.CoreTests.test_independent_string_reference_for_every_key) ... ok
+test_rejects_out_of_range_and_non_integer_arguments (tests.test_core.CoreTests.test_rejects_out_of_range_and_non_integer_arguments) ... ok
+test_total_shift_two_creates_equivalent_keys (tests.test_core.CoreTests.test_total_shift_two_creates_equivalent_keys) ... ok
+test_trace_matches_fast_api (tests.test_core.CoreTests.test_trace_matches_fast_api) ... ok
+test_export_then_verify_and_bad_rows (tests.test_services.ExchangeTests.test_export_then_verify_and_bad_rows) ... ok
+test_wrong_header_empty_and_extra_columns (tests.test_services.ExchangeTests.test_wrong_header_empty_and_extra_columns) ... ok
+test_cancel_is_explicit_and_progress_matches_checked (tests.test_services.ExperimentTests.test_cancel_is_explicit_and_progress_matches_checked) ... ok
+test_collision_groups_cover_keys_and_equal_attack_candidates (tests.test_services.ExperimentTests.test_collision_groups_cover_keys_and_equal_attack_candidates) ... ok
+test_in_app_checks_and_cancellation (tests.test_services.ExperimentTests.test_in_app_checks_and_cancellation) ... ok
+test_inconsistent_pairs_have_no_candidate (tests.test_services.ExperimentTests.test_inconsistent_pairs_have_no_candidate) ... ok
+test_search_returns_all_candidates_and_multi_pair_intersection (tests.test_services.ExperimentTests.test_search_returns_all_candidates_and_multi_pair_intersection) ... ok
+test_whole_plaintext_space_and_cancelled_partial_groups (tests.test_services.ExperimentTests.test_whole_plaintext_space_and_cancelled_partial_groups) ... ok
+test_all_ascii_control_characters_and_empty_text (tests.test_services.TextTests.test_all_ascii_control_characters_and_empty_text) ... ok
+test_all_byte_values_round_trip_all_formats (tests.test_services.TextTests.test_all_byte_values_round_trip_all_formats) ... ok
+test_invalid_ascii_ciphertext_and_format (tests.test_services.TextTests.test_invalid_ascii_ciphertext_and_format) ... ok
+test_background_attack_and_input_unlock (tests.test_ui.UiTests.test_background_attack_and_input_unlock) ... ok
+test_binary_actions_copy_validation_keyboard_and_navigation (tests.test_ui.UiTests.test_binary_actions_copy_validation_keyboard_and_navigation) ... ok
+test_chinese_and_digit_glyphs_are_available (tests.test_ui.UiTests.test_chinese_and_digit_glyphs_are_available) ... ok
+test_collision_and_self_check_pages (tests.test_ui.UiTests.test_collision_and_self_check_pages) ... ok
+test_cross_csv_buttons_and_navigation_item_spacing (tests.test_ui.UiTests.test_cross_csv_buttons_and_navigation_item_spacing) ... ok
+test_module_entrypoint_runs_event_loop_and_exits_cleanly (tests.test_ui.UiTests.test_module_entrypoint_runs_event_loop_and_exits_cleanly) ... ok
+test_resize_and_close_while_task_running (tests.test_ui.UiTests.test_resize_and_close_while_task_running) ... ok
+test_text_actions_formats_empty_and_non_ascii (tests.test_ui.UiTests.test_text_actions_formats_empty_and_non_ascii) ... ok
+test_worker_failure_and_cooperative_cancel_restore_controls (tests.test_ui.UiTests.test_worker_failure_and_cooperative_cancel_restore_controls) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 3.220s
+
+OK
