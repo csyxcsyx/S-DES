@@ -4,10 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sdes-course-lab"
-version = "1.0.0"
+version = "1.2.0"
 description = "信息安全导论 S-DES 桌面实验程序"
 requires-python = ">=3.13"
 dependencies = ["PySide6==6.11.1"]
 
+[project.optional-dependencies]
+evidence = ["Pillow==12.2.0"]
+
 [tool.setuptools.packages.find]
 include = ["sdes_app*"]
+
+[tool.setuptools.package-data]
+sdes_app = ["ui/assets/*.svg", "ui/assets/*.ico", "ui/assets/*.png"]

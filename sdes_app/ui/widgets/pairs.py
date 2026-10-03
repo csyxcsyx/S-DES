@@ -1,8 +1,10 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QAbstractItemView, QHeaderView, QLabel, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+from PySide6.QtGui import QFont
+from PySide6.QtWidgets import QLabel, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
 
 from sdes_app.core.bit_ops import parse_bits
 from .layout import actions, button
+from .tables import configure_table
 
 
 class PairEditor(QWidget):
@@ -12,12 +14,10 @@ class PairEditor(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         self.table = QTableWidget(0, 2)
         self.table.setHorizontalHeaderLabels(("8 位明文", "8 位密文"))
-        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.table.setMinimumHeight(145)
+        configure_table(self.table, editable=True, visible_rows=4)
         self.table.setAccessibleName("已知明密文对，双击或按 F2 编辑")
-        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.add_button = button("添加一对")
-        self.remove_button = button("删除选中行")
+        self.add_button = button("添加一行")
+        self.remove_button = button("删除选中")
         self.error = QLabel()
         self.error.setObjectName("error")
         self.error.setWordWrap(True)
@@ -39,6 +39,7 @@ class PairEditor(QWidget):
         for column, text in enumerate((plaintext, ciphertext)):
             item = QTableWidgetItem(text)
             item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            item.setFont(QFont("Consolas", 11))
             self.table.setItem(row, column, item)
 
     def remove_selected(self):

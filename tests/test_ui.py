@@ -10,16 +10,17 @@ from unittest.mock import patch
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QRawFont
 from PySide6.QtTest import QTest
-from PySide6.QtWidgets import QApplication, QPlainTextEdit, QPushButton
+from PySide6.QtWidgets import QApplication, QPlainTextEdit, QPushButton, QTableView
 
 from sdes_app.services.experiments import analyze_collisions, search_keys
 from sdes_app.services.exchange import verify_csv
 from sdes_app.ui.main_window import MainWindow
 from sdes_app.ui.theme import apply_theme
 from sdes_app.ui.widgets.tasks import TaskPanel
+from sdes_app.ui.motion import MIN_LOADING_MS
 
 
 class UiTests(unittest.TestCase):
@@ -171,11 +172,133 @@ class UiTests(unittest.TestCase):
                 page.import_button.click()
             self.assertEqual(page.cross_table.model().rowCount(), 8)
             self.assertIn("8/8", page.cross_status.text())
-            self.assertIn("只证明文件数据", page.cross_status.text())
+            self.assertIn("组间记录待补充", page.cross_status.text())
         rects = [self.window.navigation.visualItemRect(self.window.navigation.item(index)) for index in range(5)]
         self.assertTrue(all(rect.height() >= 44 for rect in rects))
         self.assertTrue(all(first.bottom() < second.top() for first, second in zip(rects, rects[1:])))
         self.assertFalse(self.window.navigation.horizontalScrollBar().isVisible())
+
+    def test_uniform_tables_and_editable_pair_cells(self):
+        for table in self.window.findChildren(QTableView):
+            self.assertTrue(table.verticalHeader().isHidden())
+            self.assertFalse(table.isCornerButtonEnabled())
+            self.assertFalse(table.alternatingRowColors())
+        pairs = self.window.pages[2].pairs
+        self.assertEqual(pairs.table.rowCount(), 1)
+        pairs.add_button.click()
+        self.assertEqual(pairs.table.rowCount(), 2)
+        pairs.table.item(1, 0).setText("01010101")
+        pairs.table.item(1, 1).setText("00000101")
+        self.assertEqual(pairs.values(), [(154, 239), (85, 5)])
+        pairs.table.selectRow(1)
+        pairs.remove_button.click()
+        self.assertEqual(pairs.table.rowCount(), 1)
+
+    def test_minimum_loading_feedback_keeps_event_loop_and_real_time(self):
+        panel = self.window.pages[2].task
+        results, beats = [], []
+        panel.succeeded.connect(results.append)
+        pulse = QTimer()
+        pulse.setInterval(10)
+        pulse.timeout.connect(lambda: beats.append(1))
+        with patch.dict(os.environ, SDES_REDUCED_MOTION="0"):
+            pulse.start()
+            started = time.perf_counter()
+            panel.start(partial(search_keys, [(154, 239)]))
+            self.wait_until(lambda: panel.worker is None)
+            actual_elapsed = panel._result.elapsed
+            self.assertTrue(panel.running)
+            self.assertEqual(panel.status.text(), "结果就绪")
+            self.assertFalse(panel.start_button.isEnabled())
+            self.wait_until(lambda: not panel.running)
+            pulse.stop()
+            self.assertGreaterEqual(time.perf_counter() - started, MIN_LOADING_MS / 1000 - 0.01)
+            self.assertGreater(len(beats), 10, "加载展示不能阻塞 Qt 事件循环")
+            self.assertEqual(len(results), 1)
+            self.assertEqual(results[0].elapsed, actual_elapsed)
+            self.assertTrue(panel.spinner.isHidden())
+
+    def test_cancel_presentation_and_reduced_motion_skip_minimum(self):
+        panel = self.window.pages[2].task
+        results = []
+        panel.succeeded.connect(results.append)
+        with patch.dict(os.environ, SDES_REDUCED_MOTION="0"):
+            panel.start(partial(search_keys, [(154, 239)]))
+            self.wait_until(lambda: panel.worker is None)
+            self.assertTrue(panel.running)
+            panel.cancel()
+            self.assertFalse(panel.running)
+            self.assertTrue(results[-1].completed, "已完成计算不能伪装为取消的部分结果")
+            QTest.qWait(MIN_LOADING_MS + 20)
+            self.assertEqual(len(results), 1)
+        with patch.dict(os.environ, SDES_REDUCED_MOTION="1"):
+            panel.start(partial(search_keys, [(154, 239)]))
+            self.assertFalse(panel.spinner.timer.isActive())
+            self.wait_until(lambda: not panel.running)
+            self.assertFalse(panel.presentation_timer.isActive())
+            self.window.navigation.setCurrentRow(1)
+            self.assertIsNone(self.window.stack.graphicsEffect())
+            self.assertEqual(len(results), 2)
+
+    def test_rapid_navigation_disclosure_and_dropdown_keyboard(self):
+        with patch.dict(os.environ, SDES_REDUCED_MOTION="0"):
+            for index in (1, 3, 2, 4, 0):
+                self.window.navigation.setCurrentRow(index)
+                self.app.processEvents()
+            trace = self.window.pages[0].trace
+            for expanded in (True, False, True, False, True):
+                trace.toggle.setChecked(expanded)
+                self.app.processEvents()
+            QTest.qWait(220)
+            self.assertIsNone(self.window.stack.graphicsEffect())
+            self.assertFalse(trace.panel.isHidden())
+            self.assertGreaterEqual(trace.panel.maximumHeight(), trace.table.height())
+            trace.toggle.setChecked(False)
+            QTest.qWait(220)
+            self.assertTrue(trace.panel.isHidden())
+            self.window.navigation.setCurrentRow(1)
+            combo = self.window.pages[1].format
+            combo.setFocus(Qt.FocusReason.TabFocusReason)
+            QTest.keyClick(combo, Qt.Key.Key_Down)
+            self.assertEqual(combo.currentText(), "十六进制")
+            combo.showPopup()
+            self.app.processEvents()
+            self.assertTrue(combo.view().isVisible())
+            combo.hidePopup()
+
+    def test_pointer_focus_quiet_and_keyboard_focus_visible(self):
+        page = self.window.pages[0]
+        page.key.editor.setFocus()
+        page.block.editor.setFocus(Qt.FocusReason.TabFocusReason)
+        self.app.processEvents()
+        self.assertTrue(page.block.editor.property("keyboardFocus"))
+        QTest.mouseClick(page.block.editor, Qt.MouseButton.LeftButton)
+        self.assertFalse(page.block.editor.property("keyboardFocus"))
+        QTest.keyClick(page.block.editor, Qt.Key.Key_Tab)
+        self.assertTrue(page.key.editor.property("keyboardFocus"))
+
+    def test_table_model_reuse_and_complete_rows(self):
+        page = self.window.pages[2]
+        table = page.table
+        model = table.model()
+        table.set_rows([(1, "1010000010", 642), (2, "1110000010", 898)])
+        self.window.navigation.setCurrentRow(2)
+        QTest.qWait(80)
+        self.assertIs(table.model(), model)
+        self.assertFalse(table.showGrid())
+        self.assertLess(table.visualRect(model.index(1, 0)).bottom(), table.viewport().height())
+        self.assertEqual(model.data(model.index(0, 1), Qt.ItemDataRole.ToolTipRole), "1010000010")
+        table.set_rows([])
+        self.assertIs(table.model(), model)
+        self.assertEqual(model.rowCount(), 0)
+
+    def test_table_layout_at_150_and_200_percent_scale(self):
+        for scale in ("1.5", "2"):
+            with self.subTest(scale=scale):
+                env = dict(os.environ, QT_QPA_PLATFORM="offscreen", QT_SCALE_FACTOR=scale)
+                result = subprocess.run([sys.executable, "-X", "utf8", str(Path(__file__).with_name("gui_probe.py"))],
+                                        env=env, capture_output=True, text=True, timeout=15)
+                self.assertEqual(result.returncode, 0, result.stderr)
 
     def test_module_entrypoint_runs_event_loop_and_exits_cleanly(self):
         script = """

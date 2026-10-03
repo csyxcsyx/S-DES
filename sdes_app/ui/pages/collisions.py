@@ -1,41 +1,51 @@
 from functools import partial
 
-from PySide6.QtWidgets import QCheckBox, QFileDialog, QLabel
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QCheckBox, QFileDialog, QHBoxLayout, QLabel
 
 from sdes_app.services.exchange import write_csv
 from sdes_app.services.experiments import analyze_collisions
 from sdes_app.ui.widgets.inputs import BitInput
 from sdes_app.ui.widgets.layout import Page, actions, button, card
-from sdes_app.ui.widgets.results import DataTable
+from sdes_app.ui.widgets.tables import DataTable, TableTabs
 from sdes_app.ui.widgets.tasks import TaskPanel
+from sdes_app.ui.widgets.metrics import MetricsRow, elapsed_text
 
 
 class CollisionPage(Page):
     def __init__(self):
-        super().__init__("封闭测试 · 密钥碰撞", "按题面分析：同一明文是否能被不同密钥加密成相同密文。")
+        super().__init__("封闭测试", "检查不同密钥产生相同密文的情况")
         self.result = None
         frame, layout = card("分析范围")
-        self.plaintext = BitInput("指定明文（8 位）", 8, "10011010")
-        self.all_plaintexts = QCheckBox("同时统计全部 256 种明文（262144 次加密）")
-        self.task = TaskPanel("开始碰撞分析")
-        layout.addWidget(self.plaintext)
-        layout.addWidget(self.all_plaintexts)
+        self.plaintext = BitInput("指定明文 · 8 位", 8, "10011010")
+        self.all_plaintexts = QCheckBox("遍历全部 256 种明文")
+        self.all_plaintexts.setToolTip("共执行 262144 次加密；指定明文的分组单独显示")
+        self.task = TaskPanel("开始分析", show_elapsed=False)
+        scope = QHBoxLayout()
+        scope.setSpacing(20)
+        scope.addWidget(self.plaintext, 1)
+        scope.addWidget(self.all_plaintexts, 1, Qt.AlignmentFlag.AlignBottom)
+        layout.addLayout(scope)
         layout.addWidget(self.task)
         self.body.addWidget(frame)
         frame, layout = card("碰撞统计与实例")
-        self.summary = QLabel("固定明文时，1024 个密钥对应最多 256 种密文，必然存在密钥碰撞。")
+        self.metrics = MetricsRow(("不同密文", "碰撞组", "最大候选数", "计算耗时"))
+        self.summary = QLabel("等待分析")
+        self.summary.setObjectName("hint")
         self.summary.setWordWrap(True)
-        self.statistics = DataTable(("明文", "不同密文数", "碰撞组数", "最大候选数"), 170)
-        self.groups = DataTable(("指定明文的密文", "候选密钥数", "10 位候选密钥（完整内容见提示或导出）"), 220)
-        self.groups.horizontalHeader().setStretchLastSection(True)
+        self.statistics = DataTable(("明文", "不同密文", "碰撞组", "最大候选数"), visible_rows=5)
+        self.groups = DataTable(("密文", "候选数", "候选密钥 · 10 位"), visible_rows=5,
+                                weights=(1, 1, 3), minimums=(110, 90, 240))
+        self.groups.setToolTip("悬停查看完整密钥，或导出全部映射")
+        self.tabs = TableTabs(("明文统计", self.statistics), ("密钥分组", self.groups))
         self.export_stats = button("导出统计 CSV")
-        self.export_groups = button("导出指定明文全部映射")
+        self.export_groups = button("导出密钥映射")
         self.export_stats.setEnabled(False)
         self.export_groups.setEnabled(False)
+        layout.addWidget(self.metrics)
         layout.addWidget(self.summary)
-        layout.addWidget(self.statistics)
-        layout.addWidget(self.groups)
         layout.addLayout(actions(self.export_stats, self.export_groups))
+        layout.addWidget(self.tabs)
         self.body.addWidget(frame)
         self.finish()
         self.task.start_button.clicked.connect(self.start)
@@ -51,10 +61,13 @@ class CollisionPage(Page):
         except ValueError:
             return
         self.result = None
+        self.metrics.reset()
         self.export_stats.setEnabled(False)
         self.export_groups.setEnabled(False)
-        self.statistics.set_rows(("明文", "不同密文数", "碰撞组数", "最大候选数"), [])
-        self.groups.set_rows(("指定明文的密文", "候选密钥数", "10 位候选密钥"), [])
+        self.statistics.set_rows([])
+        self.groups.set_rows([])
+        self.tabs.setTabText(0, "明文统计")
+        self.tabs.setTabText(1, "密钥分组")
         self.plaintext.setEnabled(False)
         self.all_plaintexts.setEnabled(False)
         self.summary.setText("正在统计…")
@@ -66,15 +79,18 @@ class CollisionPage(Page):
 
     def show_result(self, result):
         self.result = result
-        state = "已完成" if result.completed else "未完成 / 已取消"
-        self.summary.setText(f"{state}；已检查 {result.checked:,}/{result.total:,} 组，完整统计 {len(result.summaries)} 种明文。"
-                             f"下表为指定明文 {result.selected_plaintext:08b} 的完整分组。")
-        self.statistics.set_rows(("明文", "不同密文数", "碰撞组数", "最大候选数"),
-                                 [(f"{row.plaintext:08b}", row.distinct_ciphertexts, row.collision_groups,
+        selected = next((row for row in result.summaries if row.plaintext == result.selected_plaintext), None)
+        self.metrics.set_values(selected.distinct_ciphertexts if selected else "—",
+                                selected.collision_groups if selected else "—",
+                                selected.max_candidates if selected else "—", elapsed_text(result.elapsed))
+        self.summary.setText(f"指定明文 {result.selected_plaintext:08b} · 已统计 {len(result.summaries)} 种明文"
+                             + ("" if result.completed else " · 未完成"))
+        self.statistics.set_rows([(f"{row.plaintext:08b}", row.distinct_ciphertexts, row.collision_groups,
                                    row.max_candidates) for row in result.summaries])
-        self.groups.set_rows(("指定明文的密文", "候选密钥数", "10 位候选密钥"),
-                             [(f"{cipher:08b}", len(keys), " ".join(f"{key:010b}" for key in keys))
+        self.groups.set_rows([(f"{cipher:08b}", len(keys), " ".join(f"{key:010b}" for key in keys))
                               for cipher, keys in result.groups.items()])
+        self.tabs.setTabText(0, f"明文统计 · {len(result.summaries)}")
+        self.tabs.setTabText(1, f"密钥分组 · {len(result.groups)}")
         self.export_stats.setEnabled(bool(result.summaries))
         self.export_groups.setEnabled(bool(result.groups))
 

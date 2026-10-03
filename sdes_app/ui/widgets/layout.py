@@ -1,9 +1,19 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QStyle, QStyleOptionButton, QStylePainter, QVBoxLayout, QWidget
+
+
+class QuietButton(QPushButton):
+    def paintEvent(self, event):
+        option = QStyleOptionButton()
+        self.initStyleOption(option)
+        if not self.property("keyboardFocus"):
+            option.state &= ~QStyle.StateFlag.State_HasFocus
+        painter = QStylePainter(self)
+        painter.drawControl(QStyle.ControlElement.CE_PushButton, option)
 
 
 def button(text: str, primary: bool = False) -> QPushButton:
-    result = QPushButton(text)
+    result = QuietButton(text)
     result.setProperty("primary", primary)
     result.setCursor(Qt.CursorShape.PointingHandCursor)
     return result
@@ -15,6 +25,7 @@ def card(title: str) -> tuple[QFrame, QVBoxLayout]:
     layout = QVBoxLayout(frame)
     layout.setContentsMargins(20, 18, 20, 18)
     layout.setSpacing(14)
+    layout.setAlignment(Qt.AlignmentFlag.AlignTop)
     label = QLabel(title)
     label.setObjectName("section")
     layout.addWidget(label)

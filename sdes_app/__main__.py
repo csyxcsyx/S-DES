@@ -9,11 +9,13 @@ def main():
         return 1
     from .ui.main_window import MainWindow
     from .ui.theme import apply_theme
+    from .ui.assets import application_icon
 
     app = QApplication(sys.argv)
     app.setApplicationName("S-DES 实验室")
     app.setOrganizationName("S-DES Course Lab")
     apply_theme(app)
+    app.setWindowIcon(application_icon())
     window = MainWindow()
     window.show()
     return app.exec()

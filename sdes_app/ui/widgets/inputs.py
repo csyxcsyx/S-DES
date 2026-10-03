@@ -21,10 +21,8 @@ class InputField(QWidget):
         layout.addWidget(self.label)
         layout.addWidget(self.editor)
         if hint:
-            helper = QLabel(hint)
-            helper.setObjectName("hint")
-            helper.setWordWrap(True)
-            layout.addWidget(helper)
+            self.editor.setToolTip(hint)
+            self.editor.setAccessibleDescription(hint)
         layout.addWidget(self.error)
         self.editor.textChanged.connect(self.clear_error)
 
@@ -56,6 +54,7 @@ class BitInput(InputField):
     def __init__(self, title: str, width: int, default: str = "", parent=None):
         super().__init__(title, f"恰好 {width} 位，仅接受 0 和 1；前导零会保留。", parent=parent)
         self.width = width
+        self.editor.setPlaceholderText("0 / 1 · " + str(width) + " 位")
         self.editor.setFont(QFont("Consolas", 14))
         self.set_text(default)
 

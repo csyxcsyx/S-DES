@@ -1,34 +1,40 @@
 from functools import partial
 
-from PySide6.QtWidgets import QFileDialog, QLabel
+from PySide6.QtWidgets import QFileDialog, QHBoxLayout, QLabel
 
 from sdes_app.services.exchange import write_csv
 from sdes_app.services.experiments import search_keys
-from sdes_app.ui.widgets.layout import Page, actions, button, card
+from sdes_app.ui.widgets.layout import Page, button, card
 from sdes_app.ui.widgets.pairs import PairEditor
-from sdes_app.ui.widgets.results import DataTable
+from sdes_app.ui.widgets.tables import DataTable
 from sdes_app.ui.widgets.tasks import TaskPanel
+from sdes_app.ui.widgets.metrics import MetricsRow, elapsed_text
 
 
 class AttackPage(Page):
     def __init__(self):
-        super().__init__("暴力破解", "枚举全部 1024 个密钥；增加明密文对可继续缩小候选集合。")
+        super().__init__("暴力破解", "输入已知明密文对，搜索全部 1024 个密钥")
         self.result = None
         frame, layout = card("已知明密文对")
         self.pairs = PairEditor()
-        self.task = TaskPanel("搜索全部密钥")
+        self.task = TaskPanel("开始搜索", show_elapsed=False)
         layout.addWidget(self.pairs)
         layout.addWidget(self.task)
         self.body.addWidget(frame)
         frame, layout = card("候选密钥")
-        self.summary = QLabel("尚未搜索。结果会列出全部匹配密钥。")
+        self.metrics = MetricsRow(("候选密钥", "已检查密钥", "计算耗时"))
+        self.summary = QLabel("等待搜索")
+        self.summary.setObjectName("hint")
         self.summary.setWordWrap(True)
-        self.table = DataTable(("候选序号", "10 位密钥", "十进制"), 220)
+        self.table = DataTable(("序号", "密钥 · 10 位", "十进制"))
         self.export_button = button("导出候选 CSV")
         self.export_button.setEnabled(False)
-        layout.addWidget(self.summary)
+        layout.addWidget(self.metrics)
+        result_actions = QHBoxLayout()
+        result_actions.addWidget(self.export_button)
+        result_actions.addWidget(self.summary, 1)
+        layout.addLayout(result_actions)
         layout.addWidget(self.table)
-        layout.addLayout(actions(self.export_button))
         self.body.addWidget(frame)
         self.finish()
         self.task.start_button.clicked.connect(self.start)
@@ -43,7 +49,8 @@ class AttackPage(Page):
         except ValueError:
             return
         self.result = None
-        self.table.set_rows(("候选序号", "10 位密钥", "十进制"), [])
+        self.metrics.reset()
+        self.table.set_rows([])
         self.export_button.setEnabled(False)
         self.summary.setText(f"正在匹配 {len(pairs)} 组明密文对…")
         self.pairs.setEnabled(False)
@@ -54,12 +61,11 @@ class AttackPage(Page):
 
     def show_result(self, result):
         self.result = result
-        self.table.set_rows(("候选序号", "10 位密钥", "十进制"),
-                            [(index + 1, f"{key:010b}", key) for index, key in enumerate(result.candidates)])
-        state = "搜索完成" if result.completed else "未完成 / 已取消：仅展示已检查范围内的候选"
-        explanation = ("可增加明密文对筛选；当前移位规则存在等效密钥，多对数据也不保证唯一。"
-                       if result.candidates else "当前已检查范围内没有匹配密钥。")
-        self.summary.setText(f"{state}；已检查 {result.checked}/1024 个密钥，找到 {len(result.candidates)} 个候选。{explanation}")
+        self.metrics.set_values(len(result.candidates), f"{result.checked:,}", elapsed_text(result.elapsed))
+        self.table.set_rows([(index + 1, f"{key:010b}", key) for index, key in enumerate(result.candidates)])
+        explanation = "含等效密钥，候选可能不唯一" if result.candidates else "没有匹配密钥"
+        self.summary.setText(explanation if result.completed else "未完成 · 仅显示已检查范围的候选")
+        self.summary.setToolTip("本作业规则使相差 0100000000 的两个主密钥等效；更多明密文对也无法区分。")
         self.export_button.setEnabled(True)
 
     def show_error(self, error):
