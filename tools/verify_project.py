@@ -22,7 +22,7 @@ from tools.reporting import write_report
 
 
 def main():
-    output = ROOT / "docs" / "test-results"
+    output = ROOT / "docs" / "evidence" / "results"
     output.mkdir(parents=True, exist_ok=True)
     stream = io.StringIO()
     suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"), top_level_dir=str(ROOT))
@@ -61,6 +61,11 @@ def main():
         "generated_at": datetime.now(local_zone).isoformat(),
         "environment": {"python": platform.python_version(), "pyside6": PySide6.__version__,
                         "platform": platform.platform(), "processor": platform.processor()},
+        "ui_motion": {"minimum_feedback_ms": 600, "page_transition_ms": 0,
+                      "progress_transition_ms": 180, "compute_time_excludes_feedback": True,
+                      "reduced_motion": "Windows 客户区动画偏好，或 SDES_REDUCED_MOTION=1"},
+        "ui_tables": {"base_row_height": 44, "header_height": 42, "grid": "horizontal separators",
+                      "scale_factors_verified": [1.5, 2.0], "persistent_model": True},
         "tests": {"run": result.testsRun, "failures": len(result.failures), "errors": len(result.errors),
                   "elapsed_seconds": duration, "round_trip_combinations": 262144,
                   "independent_reference_combinations": 8192},

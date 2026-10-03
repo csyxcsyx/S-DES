@@ -1,16 +1,33 @@
 {
-  "generated_at": "2026-10-03T13:02:16.882911+08:00",
+  "generated_at": "2026-10-03T14:29:25.824413+08:00",
   "environment": {
     "python": "3.13.5",
     "pyside6": "6.11.1",
     "platform": "Windows-11-10.0.26100-SP0",
     "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD"
   },
+  "ui_motion": {
+    "minimum_feedback_ms": 600,
+    "page_transition_ms": 0,
+    "progress_transition_ms": 180,
+    "compute_time_excludes_feedback": true,
+    "reduced_motion": "Windows 客户区动画偏好，或 SDES_REDUCED_MOTION=1"
+  },
+  "ui_tables": {
+    "base_row_height": 44,
+    "header_height": 42,
+    "grid": "horizontal separators",
+    "scale_factors_verified": [
+      1.5,
+      2.0
+    ],
+    "persistent_model": true
+  },
   "tests": {
-    "run": 28,
+    "run": 35,
     "failures": 0,
     "errors": 0,
-    "elapsed_seconds": 3.2202846000145655,
+    "elapsed_seconds": 9.78733939997619,
     "round_trip_combinations": 262144,
     "independent_reference_combinations": 8192
   },
@@ -49,7 +66,7 @@
         "1110000010"
       ],
       "checked": 1024,
-      "elapsed_seconds": 0.000675299990689382,
+      "elapsed_seconds": 0.0007107999990694225,
       "completed": true
     },
     {
@@ -69,7 +86,7 @@
         "1110000010"
       ],
       "checked": 1024,
-      "elapsed_seconds": 0.0006536000000778586,
+      "elapsed_seconds": 0.0006618000043090433,
       "completed": true
     },
     {
@@ -93,7 +110,7 @@
         "1110000010"
       ],
       "checked": 1024,
-      "elapsed_seconds": 0.0006461000011768192,
+      "elapsed_seconds": 0.0006557000160682946,
       "completed": true
     },
     {
@@ -121,7 +138,7 @@
         "1110000010"
       ],
       "checked": 1024,
-      "elapsed_seconds": 0.0006423000013455749,
+      "elapsed_seconds": 0.000666300009470433,
       "completed": true
     }
   ],
@@ -129,7 +146,7 @@
   "collisions": {
     "completed": true,
     "checked": 262144,
-    "elapsed_seconds": 0.14077339999494143,
+    "elapsed_seconds": 0.14678559999447316,
     "plaintext_count": 256,
     "selected_summary": {
       "plaintext": 154,

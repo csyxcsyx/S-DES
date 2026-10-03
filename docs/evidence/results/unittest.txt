@@ -19,15 +19,22 @@ test_all_byte_values_round_trip_all_formats (tests.test_services.TextTests.test_
 test_invalid_ascii_ciphertext_and_format (tests.test_services.TextTests.test_invalid_ascii_ciphertext_and_format) ... ok
 test_background_attack_and_input_unlock (tests.test_ui.UiTests.test_background_attack_and_input_unlock) ... ok
 test_binary_actions_copy_validation_keyboard_and_navigation (tests.test_ui.UiTests.test_binary_actions_copy_validation_keyboard_and_navigation) ... ok
+test_cancel_presentation_and_reduced_motion_skip_minimum (tests.test_ui.UiTests.test_cancel_presentation_and_reduced_motion_skip_minimum) ... ok
 test_chinese_and_digit_glyphs_are_available (tests.test_ui.UiTests.test_chinese_and_digit_glyphs_are_available) ... ok
 test_collision_and_self_check_pages (tests.test_ui.UiTests.test_collision_and_self_check_pages) ... ok
 test_cross_csv_buttons_and_navigation_item_spacing (tests.test_ui.UiTests.test_cross_csv_buttons_and_navigation_item_spacing) ... ok
+test_minimum_loading_feedback_keeps_event_loop_and_real_time (tests.test_ui.UiTests.test_minimum_loading_feedback_keeps_event_loop_and_real_time) ... ok
 test_module_entrypoint_runs_event_loop_and_exits_cleanly (tests.test_ui.UiTests.test_module_entrypoint_runs_event_loop_and_exits_cleanly) ... ok
+test_pointer_focus_quiet_and_keyboard_focus_visible (tests.test_ui.UiTests.test_pointer_focus_quiet_and_keyboard_focus_visible) ... ok
+test_rapid_navigation_disclosure_and_dropdown_keyboard (tests.test_ui.UiTests.test_rapid_navigation_disclosure_and_dropdown_keyboard) ... ok
 test_resize_and_close_while_task_running (tests.test_ui.UiTests.test_resize_and_close_while_task_running) ... ok
+test_table_layout_at_150_and_200_percent_scale (tests.test_ui.UiTests.test_table_layout_at_150_and_200_percent_scale) ... ok
+test_table_model_reuse_and_complete_rows (tests.test_ui.UiTests.test_table_model_reuse_and_complete_rows) ... ok
 test_text_actions_formats_empty_and_non_ascii (tests.test_ui.UiTests.test_text_actions_formats_empty_and_non_ascii) ... ok
+test_uniform_tables_and_editable_pair_cells (tests.test_ui.UiTests.test_uniform_tables_and_editable_pair_cells) ... ok
 test_worker_failure_and_cooperative_cancel_restore_controls (tests.test_ui.UiTests.test_worker_failure_and_cooperative_cancel_restore_controls) ... ok
 
 ----------------------------------------------------------------------
-Ran 28 tests in 3.220s
+Ran 35 tests in 9.787s
 
 OK

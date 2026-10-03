@@ -6,6 +6,8 @@
 
 主窗口通过 `QStackedWidget` 和独立 `QScrollArea` 组织五页。输入框、结果复制、过程表格、明密文对编辑器及后台任务控件均可复用。数据展示使用 `QAbstractTableModel`，长表格按可见行渲染。
 
+`widgets/tables.py` 集中管理表格模型、绘制代理和尺寸计算：`DataTable(headers, visible_rows=6, weights=None, minimums=None)` 创建一次模型，`set_rows(rows)` 就地更新数据。共享 `TableLayout` 按最小列宽、换行后的实际行高计算尺寸，编辑表格也复用该逻辑。`TableTabs` 根据当前数据表调整高度。页面不再重复表头、重建模型或各自维护列宽和固定像素高度。
+
 命名采用 snake_case（函数、变量）和 PascalCase（类）。算法位置表以从左到右、从 1 开始编号；整数的最高位对应第 1 位。
 
 ## 核心接口
@@ -61,16 +63,44 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 `Worker(QThread)` 在 `run()` 中执行服务，通过 Qt 信号传递进度、结果和异常文本。`TaskPanel` 在主线程中接收信号更新控件。
 
-启动任务时禁用开始按钮并锁定相关输入；取消只设置 Event，不强制终止线程。收到 `finished` 后才释放线程、恢复按钮并通知页面。异常后也恢复操作。窗口关闭时请求所有任务取消，短间隔检查退出状态后再关闭，避免销毁运行中的 QThread。
+启动任务时禁用开始按钮并锁定相关输入；取消只设置 Event，不强制终止线程。收到 `finished` 后释放线程：成功结果不足 600 ms 时，通过主线程单次 QTimer 等待剩余展示时间，再发布结果、恢复按钮并通知页面。`running` 包括计算和结果过渡两个阶段，`worker` 仅表示计算线程。服务的 `elapsed` 原样保存，界面没有向算法线程加入延时。取消、异常、关闭窗口和减少动画模式跳过剩余展示等待；已经算完的结果仍保持真实完成状态。
+
+窗口关闭时请求所有任务取消，短间隔检查退出状态后再关闭，避免销毁运行中的 QThread。展示定时器会停止，结果只发布一次；完成或取消后可重新启动。
 
 程序不修改全局异常处理。UI 测试临时捕获 Qt 槽函数的未处理异常，并将其作为测试失败，避免出现日志 traceback 但测试仍显示通过。
 
 主题、字体和焦点样式集中定义。Windows 正常启动由 Qt 发现系统字体；Windows 离屏测试缺少字体目录时显式加载本机微软雅黑和 Consolas，不将字体文件复制到项目。
 
+表格、下拉选项、加载指示器、数值摘要及可展开区域均由 `ui/widgets` 复用。`ui/focus.py` 区分鼠标与键盘焦点；`ui/motion.py` 定义动效时间和系统偏好。主窗口已移除整页 `QGraphicsOpacityEffect`，切换页面直接重绘，避免滚动视口与表头的残影；展开和任务反馈保留动效。图标源及导出资源位于 `ui/assets`，由 `ui/assets.py` 加载，已加入 setuptools 包资源配置。详细约定见 [界面设计说明](ui-design.md)。
+
 ## 验证与维护
 
 执行 `python -m unittest discover -v`。核心测试包括独立字符串参考实现、手算中间状态、全密钥全分组往返、等效密钥和字节完整性。服务测试包括无效格式、多对筛选、矛盾数据、碰撞分组、取消及 CSV。Qt 测试使用真实控件事件、信号和主线程事件循环，离屏运行，包含运行中关闭窗口。
 
-`tools/verify_project.py` 更新日志、实验 JSON / CSV 和五关报告；`tools/capture_screenshots.py` 更新真实 Qt 窗口截图。耗时属于对应运行的实测，测试进程和截图进程的值可以不同。
+`tools/verify_project.py` 更新 `docs/evidence/results` 内的日志、JSON / CSV 和五关报告；`tools/capture_screenshots.py` 更新 `docs/evidence/screenshots` 内的两个尺寸截图、展开状态和下拉选项截图。耗时属于对应运行的实测，测试进程和截图进程的值可以不同。
+
+```powershell
+python tools/verify_project.py
+python tools/capture_screenshots.py
+```
+
+需要额外生成加载动图时，安装可选取证依赖并增加参数：
+
+```powershell
+python -m pip install -e ".[evidence]"
+python tools/capture_screenshots.py --animation
+```
+
+Pillow 12.2.0 只用于动图与图标导出，应用运行仅依赖 PySide6。动图捕获真实 Qt 控件帧，帧间隔来自实际采样；不能将离屏动图当作桌面录屏。文件索引见 [证据目录](evidence/README.md)。
+
+`python tools/export_icon.py` 更新图标 PNG / ICO，复用可选 Pillow 依赖。缩放回归由 `tests/gui_probe.py` 在独立进程中执行；生成 150% 截图时可使用：
+
+```powershell
+$env:QT_QPA_PLATFORM = "offscreen"
+$env:QT_SCALE_FACTOR = "1.5"
+python tests/gui_probe.py --output docs/evidence/screenshots
+Remove-Item Env:QT_SCALE_FACTOR
+Remove-Item Env:QT_QPA_PLATFORM
+```
 
 新增界面功能优先复用共享组件。当前五个页面均远小于 300 行；新增业务逻辑放入服务，避免扩大主窗口或单一页面。
