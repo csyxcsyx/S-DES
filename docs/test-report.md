@@ -46,9 +46,9 @@
 
 ## 第2关：交叉测试
 
-采用另一小组提供的 `vectors.csv`，共 9 条向量，包含 9 种明文、8 个密钥，覆盖全零、全一、交替位串和前导零。对每行明文和密钥计算本组密文，与对方密文比较；同时直接解密对方密文，与该行明文比较。
+采用另一小组提供的测试向量，原始数据见 [peer-vectors-original.csv](evidence/cross-test/peer-vectors-original.csv)。文件包含 9 条向量、9 种明文和 8 个密钥，覆盖全零、全一、交替位串及前导零。对每行明文和密钥计算本组密文，与对方密文比较；同时直接解密对方密文，与该行明文比较。
 
-原始文件表头为 `key,plaintext,ciphertext`，导入文件按接口要求排列为 `plaintext,key,ciphertext`。两份文件的位串、前导零及数据行顺序一致。
+原始文件表头为 `key,plaintext,ciphertext`，导入文件 [peer-vectors-import.csv](evidence/cross-test/peer-vectors-import.csv) 按接口要求排列为 `plaintext,key,ciphertext`。两份文件的位串、前导零及数据行顺序一致。
 
 | 检查项目 | 实测结果 |
 |---|---|
@@ -61,11 +61,11 @@
 
 9 条向量的加密和解密结果均一致，交叉测试通过。原始数据、逐行结果与复现方法见[交叉测试记录](cross-test-record.md)，机器可读结果见[验证结果 CSV](evidence/cross-test/cross-test-results.csv)和[验证汇总 JSON](evidence/cross-test/cross-test-summary.json)。
 
-以下两张结果表截图覆盖 CSV 第 2～10 行，第 6 行为重叠行。
+以下两张完整程序窗口截图的分辨率为 1280 × 1120，结果表覆盖 CSV 第 2～10 行，第 6 行为重叠行。
 
-![交叉测试结果第2至6行](evidence/screenshots/12-peer-cross-top.png)
+![交叉测试完整窗口：CSV第2至6行](evidence/screenshots/12-peer-cross-top.png)
 
-![交叉测试结果第6至10行](evidence/screenshots/12-peer-cross-bottom.png)
+![交叉测试完整窗口：CSV第6至10行](evidence/screenshots/12-peer-cross-bottom.png)
 
 ## 第3关：ASCII 扩展
 

@@ -42,7 +42,7 @@
     "local_reference_matches": 9
   },
   "gui": {
-    "method": "Import the peer CSV through the actual Qt page; capture its result table at two scroll positions with QWidget.grab.",
+    "method": "Import peer CSV through the actual Qt page, run the built-in self-check, and capture the complete application window with QWidget.grab at two result-table scroll positions.",
     "platform": "offscreen",
     "rows": 9,
     "self_checks": [
@@ -75,9 +75,10 @@
     "screenshots": [
       {
         "file": "docs/evidence/screenshots/12-peer-cross-top.png",
-        "width": 974,
-        "height": 264,
-        "source_widget": "TestingPage.cross_table",
+        "width": 1280,
+        "height": 1120,
+        "source_widget": "MainWindow",
+        "capture_scope": "complete application window",
         "visible_csv_lines": [
           2,
           3,
@@ -89,9 +90,10 @@
       },
       {
         "file": "docs/evidence/screenshots/12-peer-cross-bottom.png",
-        "width": 974,
-        "height": 264,
-        "source_widget": "TestingPage.cross_table",
+        "width": 1280,
+        "height": 1120,
+        "source_widget": "MainWindow",
+        "capture_scope": "complete application window",
         "visible_csv_lines": [
           6,
           7,
@@ -102,7 +104,7 @@
         "table_scroll_value": 174
       }
     ],
-    "captured_at": "2026-10-07T14:45:03+08:00",
+    "captured_at": "2026-10-07T15:01:22+08:00",
     "passed_rows": 9
   },
   "scope": "Local encryption comparison and decryption recovery for nine peer-supplied test vectors.",

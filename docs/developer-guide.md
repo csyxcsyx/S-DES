@@ -6,7 +6,7 @@
 
 主窗口通过 `QStackedWidget` 和独立 `QScrollArea` 组织五页。输入框、结果复制、过程表格、明密文对编辑器及后台任务控件均可复用。数据展示使用 `QAbstractTableModel`，长表格按可见行渲染。
 
-`widgets/tables.py` 集中管理表格模型、绘制代理和尺寸计算：`DataTable(headers, visible_rows=6, weights=None, minimums=None)` 创建一次模型，`set_rows(rows)` 就地更新数据。共享 `TableLayout` 按最小列宽、换行后的实际行高计算尺寸，编辑表格也复用该逻辑。`TableTabs` 根据当前数据表调整高度，各页面共用表格布局与绘制规则。
+[sdes_app/ui/widgets/tables.py](../sdes_app/ui/widgets/tables.py) 集中管理表格模型、绘制代理和尺寸计算：`DataTable(headers, visible_rows=6, weights=None, minimums=None)` 创建一次模型，`set_rows(rows)` 就地更新数据。共享 `TableLayout` 按最小列宽、换行后的实际行高计算尺寸，编辑表格也复用该逻辑。`TableTabs` 根据当前数据表调整高度，各页面共用表格布局与绘制规则。
 
 命名采用 snake_case（函数、变量）和 PascalCase（类）。算法位置表以从左到右、从 1 开始编号；整数的最高位对应第 1 位。
 
@@ -40,9 +40,9 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 ## 服务接口与文件交换
 
-`services.text_cipher` 提供 `ascii_bytes`、`ascii_text`、`encrypt_text`、`decrypt_text`、`format_ciphertext` 与 `parse_ciphertext`。格式名为“二进制”“十六进制”“Base64”。非 ASCII 内容、无效位数、十六进制或非规范 Base64 均抛出 `ValueError`。
+[sdes_app/services/text_cipher.py](../sdes_app/services/text_cipher.py) 提供 `ascii_bytes`、`ascii_text`、`encrypt_text`、`decrypt_text`、`format_ciphertext` 与 `parse_ciphertext`。格式名为“二进制”“十六进制”“Base64”。非 ASCII 内容、无效位数、十六进制或非规范 Base64 均抛出 `ValueError`。
 
-`services.experiments.search_keys(pairs, progress=None, cancel=None)` 接收 `(plaintext, ciphertext)` 整数对列表；返回 `SearchResult`：
+[sdes_app/services/experiments.py](../sdes_app/services/experiments.py) 中的 `search_keys(pairs, progress=None, cancel=None)` 接收 `(plaintext, ciphertext)` 整数对列表；返回 `SearchResult`：
 
 - `candidates`：已检查范围内全部匹配密钥，升序 tuple。
 - `checked`：实际检查密钥数量，完整运行是 1024。
@@ -53,11 +53,11 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 两种实验均接收 `progress(checked, total)` 回调和 `threading.Event` 取消标记，循环中检查该标记。回调在调用线程中执行，禁止直接操作 Qt 控件。
 
-`services.exchange.verify_csv(path)` 返回 `CrossCheck` 列表，每行记录实际加密密文、实际解密明文及错误。`passed` 只有在格式正确且双向一致时为真。结构错误的表头或无数据抛出 `ValueError`；逐行格式错误保留在结果中。
+[sdes_app/services/exchange.py](../sdes_app/services/exchange.py) 中的 `verify_csv(path)` 返回 `CrossCheck` 列表，每行记录实际加密密文、实际解密明文及错误。`passed` 只有在格式正确且双向一致时为真。结构错误的表头或无数据抛出 `ValueError`；逐行格式错误保留在结果中。
 
 `export_vectors(path, pairs)` 接收 `(明文, 主密钥)` 列表，生成固定表头 `plaintext,key,ciphertext`。CSV 使用 UTF-8 BOM，写入时保留位宽。通用 `write_csv` 用于实验导出；调用方处理 `OSError`。
 
-`services.checks.run_checks(exhaustive=False, progress=None, cancel=None)` 返回手算用例验证报告，可选全空间往返。它是界面自检入口，完整单元及 UI 测试仍使用 unittest。
+[sdes_app/services/checks.py](../sdes_app/services/checks.py) 中的 `run_checks(exhaustive=False, progress=None, cancel=None)` 返回手算用例验证报告，可选全空间往返。它是界面自检入口，完整单元及 UI 测试仍使用 unittest。
 
 ## Qt 后台生命周期
 
@@ -71,7 +71,7 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 主题、字体和焦点样式集中定义。Windows 正常启动由 Qt 发现系统字体；Windows 离屏测试缺少字体目录时显式加载本机微软雅黑和 Consolas，不将字体文件复制到项目。
 
-表格、下拉选项、加载指示器、数值摘要及可展开区域均由 `ui/widgets` 复用。`ui/focus.py` 区分鼠标与键盘焦点；`ui/motion.py` 定义动效时间和系统偏好。主窗口切换页面时直接重绘，展开和任务反馈使用动效。图标源及导出资源位于 `ui/assets`，由 `ui/assets.py` 加载，并纳入 setuptools 包资源配置。详细约定见[界面设计说明](ui-design.md)。
+表格、下拉选项、加载指示器、数值摘要及可展开区域均由 [sdes_app/ui/widgets](../sdes_app/ui/widgets/) 复用。[sdes_app/ui/focus.py](../sdes_app/ui/focus.py) 区分鼠标与键盘焦点；[sdes_app/ui/motion.py](../sdes_app/ui/motion.py) 定义动效时间和系统偏好。主窗口切换页面时直接重绘，展开和任务反馈使用动效。图标源及导出资源位于 [sdes_app/ui/assets](../sdes_app/ui/assets/)，由 [sdes_app/ui/assets.py](../sdes_app/ui/assets.py) 加载，并纳入 setuptools 包资源配置。详细约定见[界面设计说明](ui-design.md)。
 
 ## 验证与实验工具
 

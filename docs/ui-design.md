@@ -32,7 +32,7 @@ Windows 客户区动画关闭时，使用静态加载标记、即时页面/内�
 
 ## 组件与验证
 
-主题位于 `ui/theme.py`；焦点和动效策略分别位于 `ui/focus.py`、`ui/motion.py`。共享表格、选项、摘要、展开区域和任务组件位于 `ui/widgets`。页面保持独立小文件，算法和服务不依赖动效代码。
+主题位于 [sdes_app/ui/theme.py](../sdes_app/ui/theme.py)；焦点和动效策略分别位于 [sdes_app/ui/focus.py](../sdes_app/ui/focus.py)、[sdes_app/ui/motion.py](../sdes_app/ui/motion.py)。共享表格、选项、摘要、展开区域和任务组件位于 [sdes_app/ui/widgets](../sdes_app/ui/widgets/)。页面保持独立小文件，算法和服务不依赖动效代码。
 
 自动验证包括最短展示期间 Qt 事件循环响应、实际耗时不变、取消/关闭/异常/重新启动、快速切换及键盘导航。截图覆盖 1120 × 900 与 880 × 600；[实验材料索引](evidence/README.md)包含下拉选项、展开状态与实际 Qt 帧加载预览。
 

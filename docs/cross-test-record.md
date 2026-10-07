@@ -1,13 +1,13 @@
 # 第2关：组间交叉测试报告
 
-实验采用另一小组提供的 `vectors.csv`，比较相同明文、密钥下的加密结果，并验证对方密文的解密恢复结果。9 条测试向量的加密和解密检查均通过，通过率为 **100%**。
+实验使用 [peer-vectors-original.csv](evidence/cross-test/peer-vectors-original.csv) 中保存的另一小组测试向量，比较相同明文、密钥下的加密结果，并验证对方密文的解密恢复结果。9 条测试向量的加密和解密检查均通过，通过率为 **100%**。
 
 ## 1. 数据来源与测试环境
 
 | 项目 | 记录 |
 |---|---|
 | 测试时间 | 2026-10-07 14:29:38（UTC+8） |
-| 数据来源 | 另一小组提供的 `vectors.csv`，共 9 条向量 |
+| 数据来源 | 另一小组提供的 9 条向量，原始数据为 [peer-vectors-original.csv](evidence/cross-test/peer-vectors-original.csv) |
 | 样本覆盖 | 9 种明文、8 个密钥；包括全零、全一、交替位串和前导零 |
 | 本组程序 | S-DES 实验室 1.2.0 |
 | 代码基准 | `71622cec4f8e2588ca76025e44c60273b120dfec` |
@@ -17,13 +17,13 @@
 
 ## 2. 原始数据保存与格式适配
 
-[对方原始 CSV](evidence/cross-test/peer-vectors-original.csv) 按原始字节保存，文件大小为 289 字节，SHA-256 为：
+[peer-vectors-original.csv](evidence/cross-test/peer-vectors-original.csv) 按原始字节保存，文件大小为 289 字节，SHA-256 为：
 
 ```text
 e7f1c0ee3b6c4b1c937acd31a92477d80eaaa0a3a3d438dc6eb623f2d9cc294d
 ```
 
-原文件表头顺序为 `key,plaintext,ciphertext`，本组导入接口规定的顺序为 `plaintext,key,ciphertext`。因此另存[导入用 CSV](evidence/cross-test/peer-vectors-import.csv)，仅调整三列的排列顺序，以带 BOM 的 UTF-8 编码保存；所有位串、前导零及数据行顺序均保持一致。原文件与导入文件的 CSV 行号一一对应，第 1 行均为表头。
+原文件表头顺序为 `key,plaintext,ciphertext`，导入文件为 [peer-vectors-import.csv](evidence/cross-test/peer-vectors-import.csv)，其列顺序为接口要求的 `plaintext,key,ciphertext`。导入文件以带 BOM 的 UTF-8 编码保存；所有位串、前导零及数据行顺序均与原始文件一致。两份文件的 CSV 行号一一对应，第 1 行均为表头。
 
 ## 3. 验证方法
 
@@ -62,7 +62,7 @@ e7f1c0ee3b6c4b1c937acd31a92477d80eaaa0a3a3d438dc6eb623f2d9cc294d
 
 ## 5. 界面截图
 
-截图直接取自程序验证页面的结果表，分辨率为 974 × 264。两张截图通过滚动同一数据表覆盖全部 9 条结果，第 6 行为重叠行。
+截图包含完整程序窗口，分辨率为 1280 × 1120，展示左侧导航、算法自检及交叉测试结果。两张截图通过滚动同一数据表覆盖全部 9 条结果，第 6 行为重叠行。
 
 图 1：CSV 第 2～6 行。
 
