@@ -1,0 +1,2 @@
+# Preserve CSV evidence bytes so recorded SHA-256 values remain reproducible.
+docs/evidence/cross-test/*.csv -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

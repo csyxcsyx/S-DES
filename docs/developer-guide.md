@@ -79,6 +79,8 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 `tools/verify_project.py` 更新 `docs/evidence/results` 内的日志、JSON / CSV 和五关报告；`tools/capture_screenshots.py` 更新 `docs/evidence/screenshots` 内的两个尺寸截图、展开状态和下拉选项截图。耗时属于对应运行的实测，测试进程和截图进程的值可以不同。
 
+组间测试数据单独保存于 `docs/evidence/cross-test`，其截图为 `12-peer-cross-top.png`、`12-peer-cross-bottom.png`。组间实测和桌面录屏的独立记录分别见[组间交叉测试报告](cross-test-record.md)与[录像与实测记录](demo-recording.md)。自动报告模板仅包含基础实验，重新运行生成器后，总报告中的第2关与第4关实测部分由上述独立记录合并恢复。
+
 ```powershell
 python tools/verify_project.py
 python tools/capture_screenshots.py

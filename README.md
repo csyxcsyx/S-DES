@@ -23,6 +23,7 @@ python -m sdes_app
 
 - 自动测试：`python -m unittest discover -v`
 - [开发结构与接口](docs/developer-guide.md) · [五关测试报告](docs/test-report.md)
-- [截图与实验数据](docs/evidence/README.md) · [交叉记录](docs/cross-test-record.md) · [录像步骤](docs/demo-recording.md)
+- [截图与实验数据](docs/evidence/README.md) · [交叉记录](docs/cross-test-record.md) · [录像与实测记录](docs/demo-recording.md)
+- [暴力破解桌面录屏](docs/evidence/video/bruteforce.mp4) · [候选密钥与原始计时 CSV](docs/evidence/results/key_candidates.csv)
 
-正式组间交叉记录与桌面录像待补充。
+第2关已完成另一小组提供的 9 条测试向量验证，加密与解密均 9/9 一致；原始 CSV、逐行结果和界面截图见[组间交叉测试报告](docs/cross-test-record.md)。第4关的暴力破解桌面录像与候选 CSV 已归档，五关结果汇总于测试报告。

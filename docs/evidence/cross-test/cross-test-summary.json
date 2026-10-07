@@ -1,0 +1,221 @@
+{
+  "tested_at": "2026-10-07T14:29:38+08:00",
+  "source": {
+    "original_filename": "vectors.csv",
+    "archived_file": "docs/evidence/cross-test/peer-vectors-original.csv",
+    "bytes": 289,
+    "sha256": "e7f1c0ee3b6c4b1c937acd31a92477d80eaaa0a3a3d438dc6eb623f2d9cc294d",
+    "columns": [
+      "key",
+      "plaintext",
+      "ciphertext"
+    ],
+    "provenance": "Test vectors supplied by another course group; group identity and program version not supplied."
+  },
+  "normalization": {
+    "file": "docs/evidence/cross-test/peer-vectors-import.csv",
+    "columns": [
+      "plaintext",
+      "key",
+      "ciphertext"
+    ],
+    "sha256": "32f116460c406befd7d28e05d24df1462d85bf99e493aa08d389e3d56eb38e08",
+    "encoding": "UTF-8 with BOM",
+    "transformation": "Column order only; values and row order unchanged."
+  },
+  "environment": {
+    "os": "Windows-11-10.0.26100-SP0",
+    "python": "3.13.7",
+    "pyside6": "6.11.1",
+    "qt": "6.11.1",
+    "app_version": "1.2.0",
+    "base_commit": "71622cec4f8e2588ca76025e44c60273b120dfec"
+  },
+  "totals": {
+    "rows": 9,
+    "unique_plaintexts": 9,
+    "unique_keys": 8,
+    "format_errors": 0,
+    "encryption_matches": 9,
+    "decryption_matches": 9,
+    "passed": 9,
+    "local_reference_matches": 9
+  },
+  "gui": {
+    "method": "Actual Qt widgets; file-picker return path supplied programmatically; application import button clicked; offscreen window.grab captures.",
+    "platform": "offscreen",
+    "status": "通过 9/9 行 · 组间记录待补充",
+    "rows": 9,
+    "self_checks": [
+      [
+        "手算子密钥",
+        "通过",
+        "K1=10100100，K2=10010010"
+      ],
+      [
+        "手算加密结果",
+        "通过",
+        "10011010 → 11101111"
+      ],
+      [
+        "手算解密结果",
+        "通过",
+        "11101111 → 10011010"
+      ],
+      [
+        "过程记录一致",
+        "通过",
+        "步骤输出与加密 API 一致"
+      ],
+      [
+        "全空间验证",
+        "通过",
+        "262144 组加解密往返全部通过"
+      ]
+    ],
+    "screenshots": [
+      {
+        "file": "docs/evidence/screenshots/12-peer-cross-top.png",
+        "width": 1280,
+        "height": 1100,
+        "table_scroll_value": 0
+      },
+      {
+        "file": "docs/evidence/screenshots/12-peer-cross-bottom.png",
+        "width": 1280,
+        "height": 1100,
+        "table_scroll_value": 174
+      }
+    ],
+    "captured_at": "2026-10-07T14:30:35+08:00"
+  },
+  "scope": "Local verification of the other group's encryption vectors and local decryption of their ciphertext; no claim that the other group ran this program or verified our exported vectors.",
+  "results": [
+    {
+      "line": 2,
+      "plaintext": "11010111",
+      "key": "1010000010",
+      "ciphertext": "11101000",
+      "actual_ciphertext": "11101000",
+      "actual_plaintext": "11010111",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "11101000",
+      "reference_match": true
+    },
+    {
+      "line": 3,
+      "plaintext": "00000000",
+      "key": "0000000000",
+      "ciphertext": "11110000",
+      "actual_ciphertext": "11110000",
+      "actual_plaintext": "00000000",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "11110000",
+      "reference_match": true
+    },
+    {
+      "line": 4,
+      "plaintext": "11111111",
+      "key": "1111111111",
+      "ciphertext": "00001111",
+      "actual_ciphertext": "00001111",
+      "actual_plaintext": "11111111",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "00001111",
+      "reference_match": true
+    },
+    {
+      "line": 5,
+      "plaintext": "00000001",
+      "key": "0000000001",
+      "ciphertext": "01100100",
+      "actual_ciphertext": "01100100",
+      "actual_plaintext": "00000001",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "01100100",
+      "reference_match": true
+    },
+    {
+      "line": 6,
+      "plaintext": "00101010",
+      "key": "0101010101",
+      "ciphertext": "10101000",
+      "actual_ciphertext": "10101000",
+      "actual_plaintext": "00101010",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "10101000",
+      "reference_match": true
+    },
+    {
+      "line": 7,
+      "plaintext": "10000000",
+      "key": "1010101010",
+      "ciphertext": "01111100",
+      "actual_ciphertext": "01111100",
+      "actual_plaintext": "10000000",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "01111100",
+      "reference_match": true
+    },
+    {
+      "line": 8,
+      "plaintext": "00100000",
+      "key": "1000000000",
+      "ciphertext": "11101100",
+      "actual_ciphertext": "11101100",
+      "actual_plaintext": "00100000",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "11101100",
+      "reference_match": true
+    },
+    {
+      "line": 9,
+      "plaintext": "11111010",
+      "key": "0001111011",
+      "ciphertext": "11110100",
+      "actual_ciphertext": "11110100",
+      "actual_plaintext": "11111010",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "11110100",
+      "reference_match": true
+    },
+    {
+      "line": 10,
+      "plaintext": "00001000",
+      "key": "1010000010",
+      "ciphertext": "00010100",
+      "actual_ciphertext": "00010100",
+      "actual_plaintext": "00001000",
+      "error": "",
+      "encryption_match": true,
+      "decryption_match": true,
+      "passed": true,
+      "reference_ciphertext": "00010100",
+      "reference_match": true
+    }
+  ]
+}
