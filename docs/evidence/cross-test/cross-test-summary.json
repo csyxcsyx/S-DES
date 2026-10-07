@@ -10,7 +10,7 @@
       "plaintext",
       "ciphertext"
     ],
-    "provenance": "Test vectors supplied by another course group; group identity and program version not supplied."
+    "provenance": "Test vectors supplied by another course group."
   },
   "normalization": {
     "file": "docs/evidence/cross-test/peer-vectors-import.csv",
@@ -42,9 +42,8 @@
     "local_reference_matches": 9
   },
   "gui": {
-    "method": "Actual Qt widgets; file-picker return path supplied programmatically; application import button clicked; offscreen window.grab captures.",
+    "method": "Import the peer CSV through the actual Qt page; capture its result table at two scroll positions with QWidget.grab.",
     "platform": "offscreen",
-    "status": "通过 9/9 行 · 组间记录待补充",
     "rows": 9,
     "self_checks": [
       [
@@ -76,20 +75,37 @@
     "screenshots": [
       {
         "file": "docs/evidence/screenshots/12-peer-cross-top.png",
-        "width": 1280,
-        "height": 1100,
+        "width": 974,
+        "height": 264,
+        "source_widget": "TestingPage.cross_table",
+        "visible_csv_lines": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
         "table_scroll_value": 0
       },
       {
         "file": "docs/evidence/screenshots/12-peer-cross-bottom.png",
-        "width": 1280,
-        "height": 1100,
+        "width": 974,
+        "height": 264,
+        "source_widget": "TestingPage.cross_table",
+        "visible_csv_lines": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
         "table_scroll_value": 174
       }
     ],
-    "captured_at": "2026-10-07T14:30:35+08:00"
+    "captured_at": "2026-10-07T14:45:03+08:00",
+    "passed_rows": 9
   },
-  "scope": "Local verification of the other group's encryption vectors and local decryption of their ciphertext; no claim that the other group ran this program or verified our exported vectors.",
+  "scope": "Local encryption comparison and decryption recovery for nine peer-supplied test vectors.",
   "results": [
     {
       "line": 2,

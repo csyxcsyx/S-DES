@@ -6,7 +6,7 @@
 
 主窗口通过 `QStackedWidget` 和独立 `QScrollArea` 组织五页。输入框、结果复制、过程表格、明密文对编辑器及后台任务控件均可复用。数据展示使用 `QAbstractTableModel`，长表格按可见行渲染。
 
-`widgets/tables.py` 集中管理表格模型、绘制代理和尺寸计算：`DataTable(headers, visible_rows=6, weights=None, minimums=None)` 创建一次模型，`set_rows(rows)` 就地更新数据。共享 `TableLayout` 按最小列宽、换行后的实际行高计算尺寸，编辑表格也复用该逻辑。`TableTabs` 根据当前数据表调整高度。页面不再重复表头、重建模型或各自维护列宽和固定像素高度。
+`widgets/tables.py` 集中管理表格模型、绘制代理和尺寸计算：`DataTable(headers, visible_rows=6, weights=None, minimums=None)` 创建一次模型，`set_rows(rows)` 就地更新数据。共享 `TableLayout` 按最小列宽、换行后的实际行高计算尺寸，编辑表格也复用该逻辑。`TableTabs` 根据当前数据表调整高度，各页面共用表格布局与绘制规则。
 
 命名采用 snake_case（函数、变量）和 PascalCase（类）。算法位置表以从左到右、从 1 开始编号；整数的最高位对应第 1 位。
 
@@ -36,7 +36,7 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 子密钥先执行 P10，再将左右两个 5 位分组分别从原状态循环左移 1、2 位并执行 P8。第二轮不是累计 3 位。S-Box 行由外侧两位决定，列由内侧两位决定。
 
-原始密钥第 2 位经过 P10 到位置 3；移位 1 位、2 位后分别到左半位置 2、1，两者均被 P8 排除。因此 `key ^ 0b0100000000` 是其等效密钥，全部 1024 个主密钥只有 512 对不同子密钥。不要在破解服务中删除等效候选，或为了得到唯一答案修改密钥规则。
+原始密钥第 2 位经过 P10 到位置 3；移位 1 位、2 位后分别到左半位置 2、1，两者均被 P8 排除。因此 `key ^ 0b0100000000` 是其等效密钥，全部 1024 个主密钥只有 512 对不同子密钥。破解服务返回全部满足已知对约束的候选，包括等效密钥。
 
 ## 服务接口与文件交换
 
@@ -71,18 +71,16 @@ assert decrypt_block(cipher, key) == int("10011010", 2)
 
 主题、字体和焦点样式集中定义。Windows 正常启动由 Qt 发现系统字体；Windows 离屏测试缺少字体目录时显式加载本机微软雅黑和 Consolas，不将字体文件复制到项目。
 
-表格、下拉选项、加载指示器、数值摘要及可展开区域均由 `ui/widgets` 复用。`ui/focus.py` 区分鼠标与键盘焦点；`ui/motion.py` 定义动效时间和系统偏好。主窗口已移除整页 `QGraphicsOpacityEffect`，切换页面直接重绘，避免滚动视口与表头的残影；展开和任务反馈保留动效。图标源及导出资源位于 `ui/assets`，由 `ui/assets.py` 加载，已加入 setuptools 包资源配置。详细约定见 [界面设计说明](ui-design.md)。
+表格、下拉选项、加载指示器、数值摘要及可展开区域均由 `ui/widgets` 复用。`ui/focus.py` 区分鼠标与键盘焦点；`ui/motion.py` 定义动效时间和系统偏好。主窗口切换页面时直接重绘，展开和任务反馈使用动效。图标源及导出资源位于 `ui/assets`，由 `ui/assets.py` 加载，并纳入 setuptools 包资源配置。详细约定见[界面设计说明](ui-design.md)。
 
-## 验证与维护
+## 验证与实验工具
 
 执行 `python -m unittest discover -v`。核心测试包括独立字符串参考实现、手算中间状态、全密钥全分组往返、等效密钥和字节完整性。服务测试包括无效格式、多对筛选、矛盾数据、碰撞分组、取消及 CSV。Qt 测试使用真实控件事件、信号和主线程事件循环，离屏运行，包含运行中关闭窗口。
 
-`tools/verify_project.py` 更新 `docs/evidence/results` 内的日志、JSON / CSV 和五关报告；`tools/capture_screenshots.py` 更新 `docs/evidence/screenshots` 内的两个尺寸截图、展开状态和下拉选项截图。耗时属于对应运行的实测，测试进程和截图进程的值可以不同。
-
-组间测试数据单独保存于 `docs/evidence/cross-test`，其截图为 `12-peer-cross-top.png`、`12-peer-cross-bottom.png`。组间实测和桌面录屏的独立记录分别见[组间交叉测试报告](cross-test-record.md)与[录像与实测记录](demo-recording.md)。自动报告模板仅包含基础实验，重新运行生成器后，总报告中的第2关与第4关实测部分由上述独立记录合并恢复。
+`tools/verify_project.py` 组织单元测试与自动实验；`tools/capture_screenshots.py` 通过实际 Qt 控件生成界面截图。实验日志、统计数据、交换数据、截图和录像统一存放于 `docs/evidence`，文件说明见[实验材料索引](evidence/README.md)。
 
 ```powershell
-python tools/verify_project.py
+python -m unittest discover -v
 python tools/capture_screenshots.py
 ```
 
@@ -93,7 +91,7 @@ python -m pip install -e ".[evidence]"
 python tools/capture_screenshots.py --animation
 ```
 
-Pillow 12.2.0 只用于动图与图标导出，应用运行仅依赖 PySide6。动图捕获真实 Qt 控件帧，帧间隔来自实际采样；不能将离屏动图当作桌面录屏。文件索引见 [证据目录](evidence/README.md)。
+Pillow 12.2.0 用于动图与图标导出，应用运行依赖 PySide6。动图捕获实际 Qt 控件帧，帧间隔来自采样时间。文件索引见[实验材料索引](evidence/README.md)。
 
 `python tools/export_icon.py` 更新图标 PNG / ICO，复用可选 Pillow 依赖。缩放回归由 `tests/gui_probe.py` 在独立进程中执行；生成 150% 截图时可使用：
 

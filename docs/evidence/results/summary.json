@@ -160,7 +160,12 @@
     "max_max_candidates": 8
   },
   "external_cross_test": {
-    "status": "待完成",
-    "reason": "尚未取得其他小组程序或测试数据"
+    "status": "passed",
+    "tested_at": "2026-10-07T14:29:38+08:00",
+    "rows": 9,
+    "encryption_matches": 9,
+    "decryption_matches": 9,
+    "passed": 9,
+    "summary_file": "docs/evidence/cross-test/cross-test-summary.json"
   }
 }
